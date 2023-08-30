@@ -23,7 +23,17 @@ public class TelaFrame extends JFrame {
         Comida comida = new Comida(widthTela, heightTela, snake);
         MovimentoSnake movimentoSnake = new MovimentoSnake(snake, comida, widthTela, heightTela);
         Game game = new Game(widthTela, heightTela, snake, movimentoSnake, comida);
-        add(game);
-        setVisible(true);
+
+        /**
+         * {@link SwingUtilities.invokeLater} é um método da biblioteca Swing que é usado para garantir que algumas operações
+         * relacionadas à GUI sejam executadas na thread de despacho de eventos do Swing,
+         * também conhecida como Event Dispatch Thread (EDT). Isso é importante porque as operações de GUI devem ser
+         * tratadas em uma única thread para evitar problemas de sincronização e atualizações concorrentes, que podem levar
+         * a comportamentos indesejados ou até mesmo a erros.
+         * */
+        SwingUtilities.invokeLater(() -> {
+            add(game);
+            setVisible(true);
+        });
     }
 }

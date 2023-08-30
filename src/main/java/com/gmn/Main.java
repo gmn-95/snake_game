@@ -1,7 +1,11 @@
 package com.gmn;
 
+import com.gmn.view.TelaFrame;
+
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        SwingUtilities.invokeLater(TelaFrame::new);
     }
 }
