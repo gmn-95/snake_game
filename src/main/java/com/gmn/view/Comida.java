@@ -45,8 +45,10 @@ public class Comida {
     }
 
     public void draw(Graphics g){
-        g.setColor(Color.RED);
-        g.fillRect(pontoComida.x, pontoComida.y, raio, raio);
+        if (pontoComida != null) {
+            g.setColor(Color.RED);
+            g.fillRect(pontoComida.x, pontoComida.y, raio, raio);
+        }
     }
 
     public Point getPontoComida() {
