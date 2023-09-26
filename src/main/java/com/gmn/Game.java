@@ -4,6 +4,7 @@ import com.gmn.move.MovimentoSnake;
 import com.gmn.view.Comida;
 import com.gmn.view.Snake;
 import com.gmn.view.TelaFrame;
+import com.gmn.view.menu.EndGame;
 import com.gmn.view.menu.MenuInicial;
 import com.gmn.view.menu.MenuPause;
 
@@ -16,14 +17,18 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     private final int widthTela;
     private final int heightTela;
-    private final Snake snake;
-    private final MovimentoSnake movimentoSnake;
+    private Snake snake;
+    private MovimentoSnake movimentoSnake;
     private Thread gameThread;
-    private final Comida comida;
+    private Comida comida;
     private TelaFrame telaFrame;
     private MenuPause menuPause;
+    private EndGame endGame;
     private static boolean isPausado = false;
     private boolean continuaGame = true;
+    private int telaEndGameAdicionada = 0;
+    private boolean jaAdicionou = false;
+    private boolean cacando = true;
 
     public Game(int widthTela, int heightTela, Snake snake, MovimentoSnake movimentoSnake, Comida comida, TelaFrame telaFrame) {
         this.widthTela = widthTela;
@@ -54,10 +59,22 @@ public class Game extends JPanel implements Runnable, KeyListener {
         revalidate(); // Revalide o Game JPanel para refletir as alterações
     }
 
+    private void addEndGame(){
+        endGame = new EndGame(widthTela, heightTela);
+        removeKeyListener(this.movimentoSnake);
+        add(endGame);
+        revalidate();
+    }
+
     private void removeMenuPause(){
         isPausado = false;
         remove(menuPause);
         addKeyListener(this.movimentoSnake);
+        revalidate();
+    }
+
+    private void removeEndGameMenu(){
+        remove(endGame);
         revalidate();
     }
 
@@ -68,9 +85,10 @@ public class Game extends JPanel implements Runnable, KeyListener {
         double FPS = 10.0; // FPS
         double ns = 1000000000 / FPS; // Calcula o intervalo de tempo entre atualizações
         double delta = 0; // Variável para controlar a acumulação de tempo
-        boolean cacando = true;
 
-        while(cacando && continuaGame) {
+
+        while(continuaGame) {
+
             long now = System.nanoTime(); // Obtém o tempo atual novamente
             delta += (now - lastTime) / ns; // Calcula quanto tempo passou desde a última atualização
             lastTime = now; // Atualiza o tempo da última atualização
@@ -86,15 +104,29 @@ public class Game extends JPanel implements Runnable, KeyListener {
             }
 
             if(delta >= 1) {
+                if(!cacando){
+                    if(!jaAdicionou){
+                        addEndGame();
+                        jaAdicionou = true;
+                        telaEndGameAdicionada = 1;
+                    }
+                    delta = updateDelta(delta);
+                    continue;
+                }
                 cacando = movimentoSnake.cacandoComida();
-                // Atualizar a tela na thread de eventos
-                SwingUtilities.invokeLater(this::repaint);
-                delta--; // "Consome" o tempo acumulado para atualizações
+                delta = updateDelta(delta);
 
             }
         }
 
         gameThread.interrupt();
+    }
+
+    private double updateDelta(double deltaAtual){
+        // Atualizar a tela na thread de eventos
+        SwingUtilities.invokeLater(this::repaint);
+        deltaAtual--;// "Consome" o tempo acumulado para atualizações
+        return deltaAtual;
     }
 
     @Override
@@ -115,25 +147,6 @@ public class Game extends JPanel implements Runnable, KeyListener {
     private void paintGame(Graphics g) {
         comida.draw(g);
         snake.draw(g);
-//        bordas(g);
-
-//        g.drawLine(widthTela, heightTela, 0, 0);
-//        g.drawLine(heightTela, widthTela, 0, 0);
-//        g.drawLine(0, 0, heightTela, widthTela);
-//        g.drawLine(0, 0, widthTela, heightTela);
-//        g.drawLine(widthTela, 0, 0, heightTela);
-//        g.drawLine(0, widthTela, 0, heightTela);
-//        g.drawLine(0, heightTela, 0, widthTela);
-
-
-    }
-
-    private void bordas(Graphics g){
-//        g.drawLine(0, 0, 0, heightTela);
-//        g.drawLine(0, 0, widthTela, 0);
-//        g.drawLine(widthTela - 1, heightTela, widthTela - 1, 0);
-//
-//        g.drawLine(0, widthTela - 29, heightTela, heightTela - 29);
     }
 
     @Override
@@ -143,6 +156,35 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
+        if(telaEndGameAdicionada > 0){
+            if(keyEvent.getKeyCode() == KeyEvent.VK_DOWN && endGame.isOpcaoRecomecarSelecionada()){
+                endGame.setButtonSelection(false, true);
+            }
+            else if (keyEvent.getKeyCode() == KeyEvent.VK_UP && endGame.isOpcaoExitSelecionada()) {
+                endGame.setButtonSelection(true, false);
+            }
+            else if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER && endGame != null && endGame.isOpcaoRecomecarSelecionada()){
+                removeEndGameMenu();
+                telaFrame.setScore(0);
+                telaFrame.updateTitle(0);
+                telaEndGameAdicionada = 0;
+                snake = new Snake();
+                comida.setSnake(snake);
+                movimentoSnake = new MovimentoSnake(snake, comida, widthTela, heightTela, telaFrame);
+                addKeyListener(movimentoSnake);
+                cacando = true;
+                jaAdicionou = false;
+                SwingUtilities.invokeLater(this::repaint);
+            }
+            else if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER && endGame != null && endGame.isOpcaoExitSelecionada()){
+                removeEndGameMenu();
+                retornarMenuInicial();
+                continuaGame = false;
+            }
+
+            return;
+        }
+
         if(keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE && !isPausado){
             addMenuPause();
         }
@@ -165,19 +207,26 @@ public class Game extends JPanel implements Runnable, KeyListener {
         }
         else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && menuPause != null && menuPause.isOpcaoExitSelecionada()) {
             removeMenuPause();
-            MenuInicial menu = new MenuInicial(widthTela, heightTela, telaFrame);
-            JFrame jFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            jFrame.getContentPane().removeKeyListener(this);
-            jFrame.getContentPane().remove(this);
-            jFrame.getContentPane().add(menu);
-            jFrame.getContentPane().revalidate();
-            jFrame.getContentPane().repaint();
-
-            menu.requestFocusInWindow();
+            retornarMenuInicial();
 
             continuaGame = false;
         }
 
+
+    }
+
+    private void retornarMenuInicial(){
+        MenuInicial menu = new MenuInicial(widthTela, heightTela, telaFrame);
+        JFrame jFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        jFrame.getContentPane().removeKeyListener(this);
+        jFrame.getContentPane().remove(this);
+        jFrame.getContentPane().add(menu);
+        jFrame.getContentPane().revalidate();
+        jFrame.getContentPane().repaint();
+
+        menu.requestFocusInWindow();
+
+        continuaGame = false;
     }
 
     @Override

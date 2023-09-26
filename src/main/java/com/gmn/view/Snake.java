@@ -6,17 +6,20 @@ import java.util.*;
 
 public class Snake {
 
-    private int x = 10;
-    private int y = 10;
+    private int x;
+    private int y;
     private int width = 8;
     private int height = 8;
-    private LinkedList<Point> corpo = new LinkedList<>();
+    private LinkedList<Point> corpo;
 
     public Snake() {
         initCorpo();
     }
 
     public void initCorpo(){
+        corpo = new LinkedList<>();
+        x = 10;
+        y = 10;
         corpo.add(new Point(x, y));
         corpo.add(new Point(x * 2, y));
         corpo.add(new Point(x * 4, y));

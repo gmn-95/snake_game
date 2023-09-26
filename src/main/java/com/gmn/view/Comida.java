@@ -55,4 +55,7 @@ public class Comida {
         return pontoComida;
     }
 
+    public void setSnake(Snake snake) {
+        this.snake = snake;
+    }
 }
