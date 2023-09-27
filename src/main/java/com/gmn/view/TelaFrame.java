@@ -1,6 +1,7 @@
 package com.gmn.view;
 
 import com.gmn.view.menu.MenuInicial;
+import com.gmn.view.score.RegistraPontuacaoGeral;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,5 +43,9 @@ public class TelaFrame extends JFrame {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
