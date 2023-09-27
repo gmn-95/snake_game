@@ -48,6 +48,7 @@ public class MenuAjuda extends JPanel implements KeyListener  {
                 "</html>");
 
         editorPane.setBackground(Color.BLACK);
+        editorPane.addKeyListener(this);
         add(editorPane);
     }
 

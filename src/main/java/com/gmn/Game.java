@@ -203,6 +203,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
         else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER && menuPause != null && menuPause.isOpcaoExitSelecionada()) {
             removeMenuPause();
             retornarMenuInicial();
+            RegistraPontuacaoGeral.registraPontuacao(telaFrame.getScore());
 
             continuaGame = false;
         }
