@@ -8,8 +8,8 @@ import java.awt.*;
 public class Colisao {
 
     private final Snake snake;
-    private int widthTela;
-    private int heightTela;
+    private final int widthTela;
+    private final int heightTela;
 
     public Colisao(Snake snake, int widthTela, int heightTela) {
         this.snake = snake;
@@ -27,14 +27,10 @@ public class Colisao {
     }
 
     public boolean colisaoComParedes(Point novaPosicaoCabeca){
-        if(novaPosicaoCabeca.x >= widthTela - 2
+        return novaPosicaoCabeca.x >= widthTela - 2
                 || novaPosicaoCabeca.x <= 0
                 || novaPosicaoCabeca.y >= heightTela - 30
-                || novaPosicaoCabeca.y <= 0){
-            System.out.println("BATEU");
-            return true;
-        }
-        return false;
+                || novaPosicaoCabeca.y <= 0;
     }
 
     public boolean colisaoComProprioCorpo(Point novaPosicaoCabeca){

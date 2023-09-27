@@ -7,6 +7,7 @@ import com.gmn.view.TelaFrame;
 import com.gmn.view.menu.EndGame;
 import com.gmn.view.menu.MenuInicial;
 import com.gmn.view.menu.MenuPause;
+import com.gmn.view.score.RegistraPontuacaoGeral;
 
 import javax.swing.*;
 import java.awt.*;
@@ -107,6 +108,7 @@ public class Game extends JPanel implements Runnable, KeyListener {
                 if(!cacando){
                     if(!jaAdicionou){
                         addEndGame();
+                        RegistraPontuacaoGeral.registraPontuacao(telaFrame.getScore());
                         jaAdicionou = true;
                         telaEndGameAdicionada = 1;
                     }
@@ -135,13 +137,6 @@ public class Game extends JPanel implements Runnable, KeyListener {
         paintGame(g);
         //isso deixa o jogo 'liso' sem travamentos
         Toolkit.getDefaultToolkit().sync();
-    }
-
-    private JLabel createOptionLabel(String text){
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Arial", Font.BOLD, 12));
-        label.setForeground(Color.WHITE);
-        return label;
     }
 
     private void paintGame(Graphics g) {

@@ -31,7 +31,7 @@ public class MenuAjuda extends JPanel implements KeyListener  {
         initTexto();
     }
 
-    public void initTexto(){
+    private void initTexto(){
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/html"); // Define o tipo de conteúdo como HTML
         editorPane.setEditable(false); // Impede que o usuário edite o texto

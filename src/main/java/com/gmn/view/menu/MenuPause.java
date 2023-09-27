@@ -18,7 +18,7 @@ public class MenuPause  extends JPanel {
         initConfigs();
     }
 
-    public void initConfigs() {
+    private void initConfigs() {
         setSize(this.widthTela, this.heightTela);
         setOpaque(false);
         setFocusable(true);
@@ -27,7 +27,7 @@ public class MenuPause  extends JPanel {
         initButtons();
     }
 
-    public void initButtons(){
+    private void initButtons(){
         btContinueGame = createOptionLabel("CONTINUE");
         btExitGame = createOptionLabel("VOLTAR PARA MENU");
 
@@ -46,7 +46,7 @@ public class MenuPause  extends JPanel {
         add(btExitGame, constraints);
     }
 
-    public JLabel createOptionLabel(String text) {
+    private JLabel createOptionLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Arial", Font.BOLD, 15));
         label.setForeground(Color.WHITE);

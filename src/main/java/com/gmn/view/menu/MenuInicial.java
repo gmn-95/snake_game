@@ -35,7 +35,7 @@ public class MenuInicial extends JPanel implements KeyListener {
         initConfigs();
     }
 
-    public void initConfigs(){
+    private void initConfigs(){
         setSize(this.widthTela, this.heightTela);
         setBackground(Color.BLACK);
         setFocusable(true);
@@ -45,7 +45,7 @@ public class MenuInicial extends JPanel implements KeyListener {
         initButtons();
     }
 
-    public void initButtons(){
+    private void initButtons(){
 
         btStartGame = createOptionLabel("INICIAR");
         btScore = createOptionLabel("SCORE");
